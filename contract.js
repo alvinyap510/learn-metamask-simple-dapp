@@ -30,9 +30,42 @@ The `piggybankContract` is compiled from:
   }
 */
 
-const forwarderOrigin = 'http://localhost:9010'
+const forwarderOrigin = "http://localhost:9010";
 
+// Intialize function will be called once the page loads.
 const initialize = () => {
-  //You will start here 
-}
-window.addEventListener('DOMContentLoaded', initialize)
+  // Create Metamask onboarding object
+  const onboarding = new MetaMaskOnBoarding({ forwarderOrigin });
+
+  // Select connect button
+  const onboardButton = document.getElementById("connectButton");
+
+  // Check whether Metamask is installed
+  const isMetamaskInstalled = () => {
+    // Get ethereum object from window
+    const { ethereum } = window;
+
+    return Boolean(ethereum && ethereum.isMetamask);
+  };
+
+  const onclickInstall = () => {
+    onboardButton.innerText = "Onboarding in progress";
+    onboardButton.disabled = true;
+
+    onboarding.startOnboarding();
+  };
+
+  // Actions on the status of isMetamaskInstalled
+  const metamaskClientCheck = () => {
+    if (!isMetamaskInstalled()) {
+      onboardButton.innerText = "Click here to install Metamask";
+      onboardButton.onclick = onclickInstall;
+      onboardButton.disabled = false;
+    } else {
+      onboardButton.innerText = "Connect Wallet";
+    }
+  };
+  metamaskClientCheck();
+};
+
+window.addEventListener("DOMContentLoaded", initialize);
